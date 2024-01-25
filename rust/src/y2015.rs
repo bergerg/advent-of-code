@@ -60,6 +60,80 @@ pub mod day2 {
     }
 }
 
+pub mod day3 {
+    use std::collections::HashSet;
+
+    #[derive(Eq, PartialEq, Hash, Copy, Clone, Debug)]
+    struct Coordinate (i32,i32);
+
+    impl Coordinate {
+        fn right(&self) -> Coordinate {
+            Coordinate(self.0 + 1, self.1)
+        }
+
+        fn left(&self) -> Coordinate {
+            Coordinate(self.0 - 1, self.1)
+        }
+
+        fn up(&self) -> Coordinate {
+            Coordinate(self.0, self.1 + 1)
+        }
+
+        fn down(&self) -> Coordinate {
+            Coordinate(self.0, self.1 - 1)
+        }
+    }
+
+    trait IndexParity {
+        fn evens(&self) -> String;
+        fn odds(&self) -> String;
+    }
+
+    impl IndexParity for String {
+        fn evens(&self) -> String {
+            self.chars().enumerate().filter(|&ele| ele.0 % 2 == 0).map(|ele| ele.1).collect()
+        }
+
+        fn odds(&self) -> String {
+            self.chars().enumerate().filter(|&ele| ele.0 % 2 == 1).map(|ele| ele.1).collect()
+        }
+    }
+
+    pub fn part_one(input: &str) -> usize {
+        visited_coordinates(input).len()
+    }
+
+    pub fn part_two(input :&str) -> usize {
+        let visited_by_santa = visited_coordinates(&input.to_string().clone().evens());
+        let visited_by_robot = visited_coordinates(&input.to_string().clone().odds());
+
+        visited_by_santa
+            .union(&visited_by_robot)
+            .collect::<HashSet<&Coordinate>>()
+            .len()
+    }
+
+    fn visited_coordinates(input: &str) -> HashSet<Coordinate> {
+        let mut current: Coordinate = Coordinate(0,0);
+        let mut visited_cor: HashSet<Coordinate> = HashSet::from([current]);
+        input.chars().for_each(|c| {
+            current = next_coordinate(current, c);
+            visited_cor.insert(current);
+        });
+        visited_cor
+    }
+
+    fn next_coordinate(current: Coordinate, step: char) -> Coordinate {
+        match step {
+            '>' => current.right(),
+            '<' => current.left(),
+            '^' => current.up(),
+            'v' | 'V' => current.down(),
+            _ => panic!("invalid input")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod day1 {
@@ -98,6 +172,24 @@ mod tests {
         fn test_part_two() {
             assert_eq!(part_two("2x3x4"), 34);
             assert_eq!(part_two("1x1x10"), 14);
+        }
+    }
+
+    mod day3 {
+        use crate::y2015::day3::*;
+
+        #[test]
+        fn test_part_one() {
+            assert_eq!(part_one(">"), 2);
+            assert_eq!(part_one("^>v<"), 4);
+            assert_eq!(part_one("^v^v^v^v^v"), 2);
+        }
+
+        #[test]
+        fn test_part_two() {
+            assert_eq!(part_two("^v"), 3);
+            assert_eq!(part_two("^>v<"), 3);
+            assert_eq!(part_two("^v^v^v^v^v"), 11);
         }
     }
 }
