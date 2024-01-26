@@ -134,6 +134,29 @@ pub mod day3 {
     }
 }
 
+pub mod day4 {
+    use md5::compute;
+
+    pub fn part_one(input: &str) -> u32 {
+        unhash_for_prefix(input, "00000")
+    }
+
+    pub fn part_two(input: &str) -> u32 {
+        unhash_for_prefix(input, "000000")
+    }
+
+    fn unhash_for_prefix(input: &str, prefix: &str) -> u32 {
+        let mut num = 1;
+        loop {
+            if format!("{:x}", compute(format!("{}{}", input, num))).starts_with(prefix) {
+                break num
+            } else {
+                num += 1;
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod day1 {
@@ -190,6 +213,20 @@ mod tests {
             assert_eq!(part_two("^v"), 3);
             assert_eq!(part_two("^>v<"), 3);
             assert_eq!(part_two("^v^v^v^v^v"), 11);
+        }
+    }
+
+    mod day4 {
+        use crate::y2015::day4::*;
+
+        #[test]
+        fn test_part_one() {
+            assert_eq!(part_one("abcdef"), 609043);
+            assert_eq!(part_one("pqrstuv"), 1048970);
+        }
+
+        #[test]
+        fn test_part_two() {
         }
     }
 }

@@ -42,4 +42,18 @@ mod tests {
             println!("{}:{}:2 - {}", YEAR, DAY, part_two(INPUT));
         }
     }
+
+    mod day4 {
+        use rust::y2015::day4::*;
+        use super::YEAR;
+
+        const DAY: &str = "4";
+        const INPUT: &str = "yzbqklnj";
+
+        #[test]
+        fn test() {
+            println!("{}:{}:1 - {}", YEAR, DAY, part_one(INPUT));
+            println!("{}:{}:2 - {}", YEAR, DAY, part_two(INPUT));
+        }
+    }
 }
