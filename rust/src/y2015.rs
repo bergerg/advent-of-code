@@ -157,6 +157,84 @@ pub mod day4 {
     }
 }
 
+pub mod day5 {
+
+    pub trait NiceString {
+        fn is_nice(&self) -> bool;
+        fn is_nicer(&self) -> bool;
+    }
+
+    impl NiceString for String {
+        fn is_nice(&self) -> bool {
+
+            fn check_vows(input: &str) -> bool {
+                input.chars()
+                    .into_iter()
+                    .filter(|c| ['a', 'e', 'i', 'o', 'u'].contains(c))
+                    .count() >= 3
+            }
+
+            fn check_row(input: &str) -> bool {
+                let char_vec: Vec<char> = input.chars().into_iter().collect();
+                for i in 0..(input.len() - 1) {
+                    if char_vec.get(i) == char_vec.get(i + 1) {
+                        return true
+                    }
+                }
+                false
+            }
+
+            fn check_no_dislikes(input: &str) -> bool {
+                for disliked_sequence in ["ab", "cd", "pq", "xy"] {
+                    if input.contains(disliked_sequence) {
+                        return false
+                    }
+                }
+                true
+            }
+
+
+            check_vows(self) && check_row(self) && check_no_dislikes(self)
+        }
+
+        fn is_nicer(&self) -> bool {
+
+            fn check_twice_but_not_overlapping(input: &str) -> bool {
+                for i in 0..(input.len() - 1) {
+                    if String::from(&input[i+2..]).contains(&input[i..i+2]) {
+                        return true
+                    }
+                }
+                false
+            }
+
+            fn check_sandwich_sequence(input: &str) -> bool {
+                let char_vec: Vec<char> = input.chars().into_iter().collect();
+                for i in 0..(input.len() - 2) {
+                    if char_vec.get(i) == char_vec.get(i + 2) {
+                        return true
+                    }
+                }
+                false
+            }
+
+            check_twice_but_not_overlapping(self) && check_sandwich_sequence(self)
+        }
+    }
+
+    pub fn part_one(input: &str) -> usize {
+        input.split("|")
+            .filter(|&s| s.to_string().is_nice())
+            .count()
+    }
+
+    pub fn part_two(input: &str) -> usize {
+        input.split("|")
+            .filter(|&s| s.to_string().is_nicer())
+            .count()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod day1 {
@@ -227,6 +305,31 @@ mod tests {
 
         #[test]
         fn test_part_two() {
+        }
+    }
+
+    mod day5 {
+        use crate::y2015::day5::*;
+
+        #[test]
+        fn test_part_one() {
+            assert_eq!(1, part_one("ugknbfddgicrmopn"));
+            assert_eq!(1, part_one("aaa"));
+            assert_eq!(0, part_one("aaab"));
+            assert_eq!(0, part_one("jchzalrnumimnmhp"));
+            assert_eq!(0, part_one("haegwjzuvuyypxyu"));
+            assert_eq!(0, part_one("dvszwmarrgswjxmb"));
+        }
+
+        #[test]
+        fn test_part_two() {
+            assert_eq!(1, part_two("xyxy"));
+            assert_eq!(1, part_two("aabedefgaa"));
+            assert_eq!(1, part_two("qjhvhtzxzqqjkmpb"));
+            assert_eq!(1, part_two("xxyxx"));
+            assert_eq!(0, part_two("aaa"));
+            assert_eq!(0, part_two("uurcxstgmygtbstg"));
+            assert_eq!(0, part_two("ieodomkazucvgmuy"));
         }
     }
 }
